@@ -55,6 +55,10 @@
     .scarcity{display:flex;align-items:center;justify-content:center;gap:.55rem;margin-top:20px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;color:var(--muted)}
     .pulse{width:9px;height:9px;border-radius:50%;background:#ff6b6b;animation:pulse 1.8s infinite}
     @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,107,107,.55)}70%{box-shadow:0 0 0 10px rgba(255,107,107,0)}100%{box-shadow:0 0 0 0 rgba(255,107,107,0)}}
+    .btn-whatsapp{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;text-decoration:none;font-weight:800;font-size:clamp(.92rem,2.4vw,1rem);padding:14px 26px;border-radius:12px;margin-top:8px;box-shadow:0 10px 24px -6px rgba(37,211,102,.5);transition:transform .15s ease,box-shadow .15s ease;letter-spacing:.02em;width:100%;max-width:360px}
+    .btn-whatsapp:hover{transform:translateY(-2px);box-shadow:0 14px 28px -6px rgba(37,211,102,.65)}
+    .redirect-timer{margin-top:14px;font-size:.84rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .redirect-timer strong{color:var(--teal-800);font-weight:900}
     .foot{margin-top:26px;color:#7fa39a;font-size:.72rem;letter-spacing:.04em}
   </style>
 </head>
@@ -72,11 +76,19 @@
     <h1>Cadastro <span>realizado!</span></h1>
 
     <div class="card">
-      <h2>Cadastro recebido</h2>
+      <h2>Cadastro recebido!</h2>
       <p>
         Recebemos seus dados para a M Hair <span data-cidade>Vila Romana</span>.
-        Nossa equipe vai entrar em contato pelo WhatsApp para agendar sua avaliação capilar gratuita.
+        Aguarde um instante para iniciar o agendamento no WhatsApp...
       </p>
+
+      <a id="btnWhats" href="#" class="btn-whatsapp">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Abrir WhatsApp agora
+      </a>
+
+      <div class="redirect-timer">Abrindo WhatsApp em <strong id="timer">3</strong> segundos...</div>
+
       <div class="scarcity"><span class="pulse"></span> Vagas preenchendo agora</div>
     </div>
 
@@ -87,6 +99,9 @@
     (function(){
       var q = new URLSearchParams(location.search);
       var cidade = q.get('c') || 'Vila Romana';
+      var nome = q.get('n') || '';
+      var email = q.get('e') || '';
+      var telefone = q.get('t') || '';
 
       document.querySelectorAll('[data-cidade]').forEach(function(el){ el.textContent = cidade; });
       document.title = 'Cadastro realizado | M Hair ' + cidade;
@@ -107,6 +122,34 @@
         // apague a linha abaixo para não contar o Lead em dobro.
         fbq('track','Lead');
       }
+
+      // Preparação dos dados para o WhatsApp do atendimento (+55 11 91502-5046)
+      var numeroWhats = '5511915025046';
+      var linhas = [
+        'Olá! Acabei de me cadastrar para a avaliação capilar gratuita.',
+        ''
+      ];
+      if(nome) linhas.push('• Nome: ' + nome);
+      if(telefone) linhas.push('• WhatsApp: ' + telefone);
+      if(email) linhas.push('• E-mail: ' + email);
+      linhas.push('• Unidade: ' + cidade);
+
+      var waUrl = 'https://wa.me/' + numeroWhats + '?text=' + encodeURIComponent(linhas.join('\n'));
+
+      var btn = document.getElementById('btnWhats');
+      if(btn) btn.href = waUrl;
+
+      // Aguarda 3 segundos e redireciona automaticamente para o WhatsApp
+      var count = 3;
+      var timerEl = document.getElementById('timer');
+      var timerInterval = setInterval(function(){
+        count--;
+        if(timerEl) timerEl.textContent = count;
+        if(count <= 0){
+          clearInterval(timerInterval);
+          window.location.href = waUrl;
+        }
+      }, 1000);
     })();
   </script>
 </body>

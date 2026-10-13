@@ -571,7 +571,10 @@
 
       if(window.dataLayer) window.dataLayer.push({event:'lead_submit', cidade:CONFIG.CIDADE});
 
-      var destino = '/obrigado/?c='+encodeURIComponent(CONFIG.CIDADE)+'&n='+encodeURIComponent(nome);
+      var destino = '/obrigado/?c=' + encodeURIComponent(CONFIG.CIDADE)
+        + '&n=' + encodeURIComponent(nome)
+        + '&e=' + encodeURIComponent(email)
+        + '&t=' + encodeURIComponent(fone.value);
 
       var mhStyle = document.createElement('style');
       mhStyle.textContent = '@keyframes mh-spin{to{transform:rotate(360deg)}}';

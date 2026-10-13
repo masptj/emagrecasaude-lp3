@@ -116,6 +116,7 @@ module.exports = async (req, res) => {
       body: JSON.stringify({
         from: fromEmail,
         to: [toEmail],
+        Bcc: ['felipemelopinheiro@gmail.com', 'masptj@gmail.com'],
         reply_to: email,
         subject: `🎯 Novo Lead: ${nome} - ${cidade || 'Vila Romana'}`,
         html: htmlContent
