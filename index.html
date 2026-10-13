@@ -501,7 +501,8 @@
     const CONFIG = {
       CIDADE: "Vila Romana - Lapa",   // unidade
       ENDERECO: "R. Caio Graco, 518 - Vila Romana, São Paulo - SP, 05044-000", // endereço da unidade
-      SHEETS_WEBHOOK_URL: "https://script.google.com/macros/s/AKfycby5izP3fkYS-aTTkBddYKBsq4jk87sNash6YPXhg1AX_9o-xf6AggDKocEsBB7lY2AP/exec" // mesma planilha da M Hair (coluna cidade = Vila Romana)
+      SHEETS_WEBHOOK_URL: "https://script.google.com/macros/s/AKfycby5izP3fkYS-aTTkBddYKBsq4jk87sNash6YPXhg1AX_9o-xf6AggDKocEsBB7lY2AP/exec", // mesma planilha da M Hair (coluna cidade = Vila Romana)
+      RESEND_ENDPOINT: "/api/send"    // endpoint serverless para envio via Resend
     };
 
     document.querySelectorAll('[data-cidade]').forEach(el => el.textContent = CONFIG.CIDADE);
@@ -554,6 +555,18 @@
         } catch(err){
           fetch(CONFIG.SHEETS_WEBHOOK_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:payload, keepalive:true}).catch(function(){});
         }
+      }
+
+      // Envio dos dados do lead para masptj@gmail.com via API da Resend
+      if(CONFIG.RESEND_ENDPOINT){
+        fetch(CONFIG.RESEND_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          keepalive: true
+        }).catch(function(err){
+          console.warn('Erro ao disparar envio via Resend:', err);
+        });
       }
 
       if(window.dataLayer) window.dataLayer.push({event:'lead_submit', cidade:CONFIG.CIDADE});
